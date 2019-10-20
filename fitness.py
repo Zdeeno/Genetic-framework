@@ -25,7 +25,7 @@ def sphere(population, minimum):  # OK
     def sphere_single(chromosome, minimum):
         chrom = np.asarray(chromosome)
         minim = np.asarray(minimum)
-        return np.sum(np.power((chrom - minim), 2))
+        return -np.sum(np.power((chrom - minim), 2))
     return np.apply_along_axis(sphere_single, 1, population, minimum)
 
 
@@ -63,7 +63,7 @@ def rastrigin(population):  # OK
 
 
 def griewank(population):  # OK
-    def griewank_single(chromosome):  # OK
+    def griewank_single(chromosome):
         chrom = np.asarray(chromosome)
         tmp = np.arange(len(chrom)) + 1
         tmp = np.prod(np.cos(chrom/np.sqrt(tmp)))
@@ -71,8 +71,8 @@ def griewank(population):  # OK
     return np.apply_along_axis(griewank_single, 1, population)
 
 
-def schwefel_single(population):
-    def schwefel_single(chromosome):  # OK
+def schwefel_single(population):  # OK
+    def schwefel_single(chromosome):
         chrom = np.asarray(chromosome)
         norm_tmp = np.abs(chrom)
         return -np.sum(chrom * np.sin(np.sqrt(norm_tmp)))

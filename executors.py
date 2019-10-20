@@ -1,4 +1,6 @@
 import numpy as np
+import inits
+import objects
 
 
 def local_search(init_vec, fitness_f, perturb_f, finish_f):
@@ -47,9 +49,26 @@ def local_search_adaptive(init_vec, init_const, fitness_f, perturb_f, finish_f, 
             stats.append([opt_vec, last_fitness])
             opt_vec = new_generation[max_id]
             last_fitness = new_genfitness[max_id]
-            adaptive_const = adaptive_const * np.power((np.exp(0.8)), 1/gen_size)
+            adaptive_const = adaptive_const * np.power((np.exp(0.8)), 1 / gen_size)
             # TODO: this sounds weird, check if it works! I think it should be switched
         else:
-            adaptive_const = adaptive_const * np.power((np.exp(-0.2)), 1/gen_size)
+            adaptive_const = adaptive_const * np.power((np.exp(-0.2)), 1 / gen_size)
     stats.append([opt_vec, last_fitness])
     return opt_vec, stats
+
+
+def evolutionary_algorithm(init_f, init_args, population_size,
+                           fitness_f, fitness_args,
+                           selection_f, selection_args,
+                           operators_f, operators_args,
+                           replacement_f, replacement_args,
+                           condition_f):
+    pop = inits.sample_population(init_f, init_args, population_size)
+    population = objects.Population(pop, fitness_f, selection_f, operators_f, replacement_f)
+    generation = 0
+    while condition_f(generation, population.fitness):
+        population.evaluate_population(fitness_args)
+        population.select_parents(selection_args)
+        population.run_operators(operators_args)
+        population.children_fitness(fitness_args)
+        population.do_replacement(replacement_args)

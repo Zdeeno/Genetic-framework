@@ -3,7 +3,7 @@ import numpy as np
 
 # ------ selectors -----
 
-def pointer_wheel(population, fitness, pointers_num, spins_num):
+def pointer_wheel_selector(population, fitness, pointers_num, spins_num):
     """
     pointer wheel selection type
     :param population: all chromosomes
@@ -35,4 +35,4 @@ def pointer_wheel(population, fitness, pointers_num, spins_num):
 def pointer_wheel_replacement(pop, fit, new_pop, new_fit, ret_size):
     whole_pop = np.hstack((pop, new_pop))
     whole_fit = np.vstack((fit, new_fit))
-    return pointer_wheel(whole_pop, whole_fit, ret_size, 1)
+    return pointer_wheel_selector(whole_pop, whole_fit, ret_size, 1)

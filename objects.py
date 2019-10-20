@@ -3,7 +3,7 @@ import numpy as np
 
 class Population:
 
-    def __init__(self, init_f, fitness_f, selection_f, operators_f, replacement_f=None):
+    def __init__(self, population, fitness_f, selection_f, operators_f, replacement_f=None):
         """
         Class representing whole population
         :param init_f: function to initialize the population array in form [chromosome_size, population_size]
@@ -11,7 +11,8 @@ class Population:
         :param operators_f: array of operators to perturbate single chromosome
         :param selection_f: selection of new population
         """
-        self.population = init_f()
+        assert population.ndim == 2
+        self.population = population
         self.children_population = None
         self._fitness_f = fitness_f
         self._operators_f = operators_f
