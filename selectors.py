@@ -15,7 +15,7 @@ def pointer_wheel_selector(population, fitness, pointers_num, spins_num):
     def single_spin(population, cumulative_fitness, pointers_num):
         ret = np.zeros(np.shape(population)[0], pointers_num)
         max_fit = cumulative_fitness[-1]
-        spin = (np.random.rand((1,)) * max_fit)/pointers_num
+        spin = (np.random.rand(1) * max_fit)/pointers_num
         incr = max_fit/pointers_num
         for i in range(pointers_num):
             cum_sum = i * incr + spin

@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 def sample_population(init_chromosome_f, args, population_size):
@@ -12,6 +13,12 @@ def sample_population(init_chromosome_f, args, population_size):
 
 
 def init_uniform_real(size, bounds):
-    ret = np.random.rand((size,))
+    ret = np.random.rand(size)
     ret = (ret * (bounds[1] - bounds[0])) + bounds[0]
+    return ret
+
+
+def init_unique_integer_array(size):
+    ret = [i for i in range(size)]
+    random.shuffle(ret)
     return ret
