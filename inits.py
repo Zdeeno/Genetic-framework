@@ -3,6 +3,13 @@ import random
 
 
 def sample_population(init_chromosome_f, args, population_size):
+    """
+    creates population from single chromosome init function
+    :param init_chromosome_f:
+    :param args:
+    :param population_size:
+    :return:
+    """
     tmp = init_chromosome_f(*args)
     assert tmp.ndim == 1
     ret = np.zeros((np.size(tmp), population_size))
@@ -18,7 +25,7 @@ def init_uniform_real(size, bounds):
     return ret
 
 
-def init_unique_integer_array(size):
+def init_shuffled_integer_array(size):
     ret = [i for i in range(size)]
     random.shuffle(ret)
     return ret

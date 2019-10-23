@@ -1,6 +1,7 @@
 import numpy as np
 import inits
 import objects
+import utilities
 
 
 def local_search(init_vec, fitness_f, perturb_f, finish_f):
@@ -57,18 +58,29 @@ def local_search_adaptive(init_vec, init_const, fitness_f, perturb_f, finish_f, 
     return opt_vec, stats
 
 
-def evolutionary_algorithm(init_f, init_args, population_size,
-                           fitness_f, fitness_args,
-                           selection_f, selection_args,
-                           operators_f, operators_args,
-                           replacement_f, replacement_args,
-                           condition_f):
+def genetic_algorithm(init_f, init_args, population_size,
+                      fitness_f, fitness_args,
+                      selection_f, selection_args,
+                      mutation_f, mutation_args, decay_args,
+                      crossover_f, crossover_args,
+                      replacement_f, replacement_args,
+                      condition_f):
     pop = inits.sample_population(init_f, init_args, population_size)
-    population = objects.Population(pop, fitness_f, selection_f, operators_f, replacement_f)
+    population = objects.Population(pop, fitness_f, selection_f, replacement_f)
     generation = 0
     while condition_f(generation, population.fitness):
+        print("----- GENERATION " + str(generation) + " -----")
         population.evaluate_population(fitness_args)
+        print("Population evaluated")
         population.select_parents(selection_args)
-        population.run_operators(operators_args)
-        population.children_fitness(fitness_args)
+        print("Parents selected")
+        population.run_operators(mutation_f, mutation_args)
+        population.run_operators(crossover_f, crossover_args)
+        print("Children created")
+        population.evaluate_children(fitness_args)
+        utilities.one_fifth_rule_decay(population.fitness, population.children_fitness, mutation_args, decay_args)
         population.do_replacement(replacement_args)
+        print("Population replaced")
+        generation += 1
+        print(mutation_args)
+    return population.population, population.fitness

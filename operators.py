@@ -41,11 +41,23 @@ def perturb_real_cauchy(population, gamma=1):  # OK
     return pop + np.asarray(cauchy.rvs(0, gamma, np.shape(pop)))
 
 
-def swap_two_random(population):
+def swap_two_random(population):  # maybe add probability here
     rnd = np.floor(np.random.rand(2, population.shape[1]) * population.shape[0])
     pop = np.asarray(population)
     pop[rnd[1, :]] = population[rnd[0, :]]
     pop[rnd[0, :]] = population[rnd[1, :]]
+    return pop
+
+
+def make_multiple_swaps(population, scale):
+    pop = np.asarray(population)
+    swaps_num = np.round(np.random.exponential(scale, (pop.shape[1])))
+    for i in range(swaps_num.size):
+        swaps = np.floor(np.random.rand(swaps_num[i]) * (pop.shape[0] - 1)).astype(int)
+        for swap in swaps:
+            tmp = pop[i, swap]
+            pop[i, swap] = pop[i, swap + 1]
+            pop[i, swap + 1] = tmp
     return pop
 
 
@@ -62,21 +74,24 @@ def two_point_crossover(population, parents_num):
         for idx, order in enumerate(perm):
             tmp = parents[:, order[0]]
             for i in range(1, len(order)):
-                points = np.floor(np.random.rand(2)*len(parents[0]))
+                points = np.floor(np.random.rand(2) * parents.shape[0]).astype(int)
+                if points[0] - points[1] == 0:
+                    return parents
                 if points[1] > points[0]:
-                    tmp[points[0]:points[1]] = parents[i][points[0]:points[1]]
+                    tmp[points[0]:points[1]] = parents[points[0]:points[1], i]
                 else:
-                    tmp[points[0]:-1] = parents[i][points[0]:-1]
-                    tmp[0:points[1]] = parents[i][0:points[1]]
+                    tmp[points[0]:] = parents[points[0]:, i]
+                    tmp[:points[1]] = parents[:points[1], i]
             ret[:, idx] = tmp
         return ret
 
     perms = math.factorial(parents_num)
-    new_size = np.shape(population)[1]*(perms/parents_num)
+    new_size = int(np.shape(population)[1]*(perms/parents_num))
     ret = np.empty((np.shape(population)[0], new_size))
+    idx = 0
     for i in range(0, new_size, perms):
-        idx = parents_num*i
         ret[:, i:i+perms] = single_crossover(population[:, idx:idx+parents_num])
+        idx += parents_num
     return ret
 
 

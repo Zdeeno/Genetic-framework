@@ -32,7 +32,7 @@ def sphere(population, minimum):  # OK
         minim = np.asarray(minimum)
         return -np.sum(np.power((chrom - minim), 2))
 
-    return np.apply_along_axis(sphere_single, 1, population, minimum)
+    return np.apply_along_axis(sphere_single, 0, population, minimum)
 
 
 def rosenbrock(population):  # OK
@@ -105,6 +105,3 @@ def traveled_distance(population, distance_matrix):  # for HW1
         return -np.sum(distance_matrix[from_idxs, to_idxs])
 
     return np.apply_along_axis(traveled_distance_single, 1, population, distance_matrix)
-
-
-
