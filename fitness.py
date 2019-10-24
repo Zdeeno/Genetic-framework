@@ -6,7 +6,7 @@ def one_max(population):  # OK
     def one_max_single(chromosome):
         return np.sum(chromosome)
 
-    return np.apply_along_axis(one_max_single, 1, population)
+    return np.apply_along_axis(one_max_single, 0, population)
 
 
 def labs(population):  # Probably OK
@@ -22,7 +22,7 @@ def labs(population):  # Probably OK
             h += c**2
         return h + 1
 
-    return np.apply_along_axis(labs_single, 1, population)
+    return np.apply_along_axis(labs_single, 0, population)
 
 
 def sphere(population, minimum):  # OK
@@ -42,7 +42,7 @@ def rosenbrock(population):  # OK
         tmp = 100*np.power((chrom[1:] - np.power(chrom[:-1], 2)), 2) + np.power((1 - chrom[:-1]), 2)
         return np.sum(tmp)
 
-    return np.apply_along_axis(rosenbrock_single, 1, population)
+    return np.apply_along_axis(rosenbrock_single, 0, population)
 
 
 def linear(population, sloap, bias):  # OK
@@ -52,7 +52,7 @@ def linear(population, sloap, bias):  # OK
         a = np.asarray(sloap)
         return a.dot(chrom) + bias
 
-    return np.apply_along_axis(linear_single, 1, population, sloap, bias)
+    return np.apply_along_axis(linear_single, 0, population, sloap, bias)
 
 
 def step(population, sloap, bias):  # OK
@@ -63,7 +63,7 @@ def step(population, sloap, bias):  # OK
         tmp_vec = np.floor(a*chrom)
         return np.sum(tmp_vec) + bias
 
-    return np.apply_along_axis(step_single, 1, population, sloap, bias)
+    return np.apply_along_axis(step_single, 0, population, sloap, bias)
 
 
 def rastrigin(population):  # OK
@@ -73,7 +73,7 @@ def rastrigin(population):  # OK
         chrom = chrom**2 - 10*np.cos(2*np.pi*chrom)
         return 10*len(chrom) + np.sum(chrom)
 
-    return np.apply_along_axis(rastrigin_single, 1, population)
+    return np.apply_along_axis(rastrigin_single, 0, population)
 
 
 def griewank(population):  # OK
@@ -84,7 +84,7 @@ def griewank(population):  # OK
         tmp = np.prod(np.cos(chrom/np.sqrt(tmp)))
         return 1 + (np.sum(chrom**2)/4000) - tmp
 
-    return np.apply_along_axis(griewank_single, 1, population)
+    return np.apply_along_axis(griewank_single, 0, population)
 
 
 def schwefel(population):  # OK
@@ -94,14 +94,14 @@ def schwefel(population):  # OK
         norm_tmp = np.abs(chrom)
         return -np.sum(chrom * np.sin(np.sqrt(norm_tmp)))
 
-    return np.apply_along_axis(schwefel_single, 1, population)
+    return np.apply_along_axis(schwefel_single, 0, population)
 
 
 def traveled_distance(population, distance_matrix):  # for HW1
 
-    def traveled_distance_single(chromosome, distance_matrix):
-        from_idxs = chromosome[:-1]
-        to_idxs = chromosome[1:]
-        return -np.sum(distance_matrix[from_idxs, to_idxs])
+    def traveled_distance_single(chromosome, dist_matrix):
+        from_idxs = chromosome[:-1].astype(int)
+        to_idxs = chromosome[1:].astype(int)
+        return -np.sum(dist_matrix[from_idxs, to_idxs])
 
-    return np.apply_along_axis(traveled_distance_single, 1, population, distance_matrix)
+    return np.apply_along_axis(traveled_distance_single, 0, population, distance_matrix)

@@ -13,7 +13,7 @@ def sample_population(init_chromosome_f, args, population_size):
     tmp = init_chromosome_f(*args)
     assert tmp.ndim == 1
     ret = np.zeros((np.size(tmp), population_size))
-    ret[:, 1] = tmp
+    ret[:, 0] = tmp
     for i in range(population_size - 1):
         ret[:, i + 1] = init_chromosome_f(*args)
     return ret
@@ -26,6 +26,6 @@ def init_uniform_real(size, bounds):
 
 
 def init_shuffled_integer_array(size):
-    ret = [i for i in range(size)]
-    random.shuffle(ret)
+    ret = np.arange(size)
+    np.random.shuffle(ret)
     return ret

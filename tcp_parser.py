@@ -54,10 +54,6 @@ def produce_final(file="../DU1/berlin52.tsp"):
 
 def distance_matrix(file="../DU1/berlin52.tsp"):
     arr = produce_final(file)
-    print(arr)
-    print(arr.shape)
-    print(arr[1, :])
-    print(arr - arr[0, :])
     ret = np.zeros((arr.shape[0], arr.shape[0]), dtype=float)
     for i in range(arr.shape[0]):
         ret[i, :] = np.sqrt(np.sum((arr - arr[i, :])**2, axis=1))
