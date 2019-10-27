@@ -102,6 +102,6 @@ def traveled_distance(population, distance_matrix):  # for HW1
     def traveled_distance_single(chromosome, dist_matrix):
         from_idxs = chromosome[:-1].astype(int)
         to_idxs = chromosome[1:].astype(int)
-        return -np.sum(dist_matrix[from_idxs, to_idxs])
+        return -np.sum(dist_matrix[from_idxs, to_idxs]) - dist_matrix[int(chromosome[0]), int(chromosome[-1])]
 
     return np.apply_along_axis(traveled_distance_single, 0, population, distance_matrix)

@@ -33,7 +33,28 @@ def run_shifted_sphere():
     plt.show()
 
 
-def run_tsp(file, chrom_size, population, max_gen, max_fit):
+def run_local_search_tsp(file, chrom_size, searches, operators, operators_args, max_gen, max_fit):
+    def condition(generation, fitness):
+        if fitness.max() == max_fit or generation > max_gen:
+            return False
+        else:
+            return True
+
+    top_solution, log, pop = ex.genetic_algorithm(inits.init_shuffled_integer_array, [chrom_size], 1,
+                                                  fit.traveled_distance, [parse.distance_matrix(file)],
+                                                  sel.multiple_times_selector, [searches],
+                                                  operators, operators_args,
+                                                  [[0]], 0.999, [[3]],  # decay for arguments
+                                                  [], [[]],  # no crossover
+                                                  sel.replace_the_best, [1],
+                                                  condition, False)
+
+    print("Algorithm finished.")
+    log = np.asarray(log)
+    return top_solution, -log
+
+
+def run_ea_tsp(file, chrom_size, population, crossover, max_gen, max_fit):
     def condition(generation, fitness):
         if fitness.max() == max_fit or generation > max_gen:
             return False
@@ -43,10 +64,10 @@ def run_tsp(file, chrom_size, population, max_gen, max_fit):
     top_solution, log, pop = ex.genetic_algorithm(inits.init_shuffled_integer_array, [chrom_size], population,
                                                   fit.traveled_distance, [parse.distance_matrix(file)],
                                                   sel.pointer_wheel_selector, [population, 1],
-                                                  [op.make_multiple_swaps, op.swap_two_random], [[5], [0.75]],
-                                                  [[0], []], 0.999,  # decay for arguments
-                                                  [op.ordered_crossover], [[0.25]],
-                                                  sel.pointer_wheel_replacement, [population],
+                                                  [op.swap_order], [[1]],
+                                                  [[]], 0.99, [[1]],  # decay for arguments
+                                                  crossover, [[0.1]],
+                                                  sel.replace_the_best, [population],
                                                   condition, False)
 
     print("Algorithm finished.")
@@ -54,18 +75,88 @@ def run_tsp(file, chrom_size, population, max_gen, max_fit):
     return top_solution, -log
 
 
-if __name__ == '__main__':
-    problem_file = "tsp/berlin52.tsp"
-    chrom_size = 52
+def run_all_local_searches():
+    problem_file = "tsp/pr136.tsp"
+    chrom_size = 136
     population = 50
-    max_gen = 5000
-    max_fit = -7542
+    max_gen = 1000
+    max_fit = -96772
+
+    # LOCAL SEARCHES
+
     top_sols = []
     for i in range(5):
-        ts, log = run_tsp(problem_file, chrom_size, population, max_gen, max_fit)
-        plt.plot(log, 'b', linewidth=0.5, alpha=0.7)
+        ts, log = run_local_search_tsp(problem_file, chrom_size, population,
+                                       [op.make_multiple_swaps], [[1]], max_gen, max_fit)
+        plt.plot(log, 'r')
         top_sols.append(ts)
-    print(top_sols)
+    print("EA:", top_sols)
+
+    top_sols = []
+    for i in range(5):
+        ts, log = run_local_search_tsp(problem_file, chrom_size, population,
+                                       [op.swap_two_random], [[1]], max_gen, max_fit)
+        plt.plot(log, 'g')
+        top_sols.append(ts)
+    print("EA:", top_sols)
+
+    top_sols = []
+    for i in range(5):
+        ts, log = run_local_search_tsp(problem_file, chrom_size, population,
+                                       [op.swap_order], [[1]], max_gen, max_fit)
+        plt.plot(log, 'b')
+        top_sols.append(ts)
+    print("EA:", top_sols)
+
+    plt.title("Local search Pr136")
+    plt.xlabel("generation")
+    plt.ylabel("distance")
+    plt.legend(["Prohození sousedů", "Vzdálené prohození", "Otočení pořadí", "Optimální cesta"])
+    plt.hlines(-max_fit, 0, max_gen)
     plt.grid()
-    plt.show()
-    plt.title("pr136")
+    ax = plt.gca()
+    leg = ax.get_legend()
+    leg.legendHandles[0].set_color('red')
+    leg.legendHandles[1].set_color('green')
+    leg.legendHandles[2].set_color('blue')
+    leg.legendHandles[3].set_color('black')
+    plt.savefig("pr136.png")
+
+
+def run_all_eas():
+    problem_file = "tsp/st70.tsp"
+    chrom_size = 70
+    population = 100
+    max_gen = 1000
+    max_fit = -675
+
+    # EA
+    top_sols = []
+    for i in range(5):
+        ts, log = run_ea_tsp(problem_file, chrom_size, population, [op.replace_sequence], max_gen, max_fit)
+        plt.plot(log, 'b')
+        top_sols.append(ts)
+
+    for i in range(5):
+        ts, log = run_ea_tsp(problem_file, chrom_size, population, [op.ordered_crossover], max_gen, max_fit)
+        plt.plot(log, 'r')
+        top_sols.append(ts)
+
+    print("EA:", top_sols)
+    plt.title("EA St70")
+    plt.xlabel("generation")
+    plt.ylabel("distance")
+    plt.legend(["Vložit a smazat", "Uspořádané křížení", "Optimální cesta"])
+    plt.hlines(-max_fit, 0, max_gen)
+    plt.grid()
+    ax = plt.gca()
+    leg = ax.get_legend()
+    leg.legendHandles[0].set_color('blue')
+    leg.legendHandles[1].set_color('red')
+    leg.legendHandles[2].set_color('black')
+    plt.savefig("st70_ea.png")
+
+
+if __name__ == '__main__':
+
+    run_all_eas()

@@ -5,13 +5,15 @@ RULE = 1/5
 SCALE = 1.75
 
 
-def one_fifth_rule_decay(old_fitness, new_fitness, arg, decay_arg, decay_pace):
+def one_fifth_rule_decay(old_fitness, new_fitness, arg, decay_arg, decay_pace, max):
     for i in range(len(decay_arg)):
         for j in range(len(decay_arg[i])):
-            if np.sum(((new_fitness > old_fitness).astype(int)))/old_fitness.size > RULE:
+            tmp = np.sum(((new_fitness > old_fitness).astype(int)))/(old_fitness.size + new_fitness.size)
+            if tmp > RULE:
                 arg[i][j] = arg[i][j] * decay_pace
             else:
-                arg[i][j] = arg[i][j] / decay_pace
+                if arg[i][j] < max[i][j]:
+                    arg[i][j] = arg[i][j] / decay_pace
 
 
 def my_print(string, verbose):

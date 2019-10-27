@@ -32,9 +32,25 @@ def pointer_wheel_selector(population, fitness, pointers_num, spins_num):
     return ret
 
 
+def multiple_times_selector(population, fitness, multiplier):
+    pop_size = population.shape[1]
+    new_pop = np.empty((population.shape[0], pop_size*multiplier))
+    for i in range(multiplier):
+        start = i*pop_size
+        new_pop[:, start:start+pop_size] = population
+    return new_pop
+
+
 # ------ replacement strategy ------
 
 def pointer_wheel_replacement(pop, fit, new_pop, new_fit, ret_size):
     whole_pop = np.hstack((pop, new_pop))
     whole_fit = np.hstack((fit, new_fit))
     return pointer_wheel_selector(whole_pop, ut.fitness_scaling(whole_fit), ret_size, 1)
+
+
+def replace_the_best(pop, fit, new_pop, new_fit, ret_size):
+    whole_pop = np.hstack((pop, new_pop))
+    whole_fit = np.hstack((fit, new_fit))
+    idxs = whole_fit.argsort()[-ret_size:][::-1]
+    return whole_pop[:, idxs]

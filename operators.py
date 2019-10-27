@@ -43,7 +43,7 @@ def perturb_real_cauchy(population, gamma=1):  # OK
 
 def swap_two_random(population, prob=1):  # maybe add probability here
     do_it = np.random.rand(population.shape[1])
-    booleans = (do_it > prob).astype(int)
+    booleans = (do_it < prob).astype(int)
     rnd = np.floor(np.random.rand(2, population.shape[1]) * population.shape[0]).astype(int)
     rnd[0, :] = booleans*rnd[0, :]
     rnd[1, :] = booleans * rnd[1, :]
@@ -65,6 +65,19 @@ def make_multiple_swaps(population, scale):
             pop[swap, i] = pop[swap + 1, i]
             pop[swap + 1, i] = tmp
     return pop
+
+
+def swap_order(population, prob=1):
+    def single_swap(parent, prob):
+        if np.random.rand(1) < prob:
+            interval = np.floor(np.random.rand(2) * parent.shape[0]).astype(int)
+            if interval[0] > interval[1]:
+                interval = np.flip(interval, axis=0)
+            parent[interval[0]:interval[1]] = np.flip(parent[interval[0]:interval[1]], axis=0)
+            return parent
+        else:
+            return parent
+    return np.apply_along_axis(single_swap, 0, population, prob)
 
 
 # ------------- CROSSOVER -----------
@@ -104,7 +117,7 @@ def two_point_crossover(population, parents_num):
 def replace_sequence(population, prob):
 
     def single_replacement(parents, prob):
-        if np.random.rand(1) > prob:
+        if np.random.rand(1) < prob:
             ret = np.empty(parents.shape)
             assert parents.shape[1] == 2
             parent1 = list(parents[:, 0])
@@ -140,7 +153,7 @@ def replace_sequence(population, prob):
 
 def ordered_crossover(population, prob):
     def single_ordered(parents, prob):
-        if np.random.rand(1) > prob:
+        if np.random.rand(1) < prob:
             ind1 = parents[:, 0].astype(int).tolist()
             ind2 = parents[:, 1].astype(int).tolist()
             ret = np.empty(parents.shape)

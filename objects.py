@@ -1,5 +1,5 @@
 import numpy as np
-import utilities as ut
+
 
 class Population:
 

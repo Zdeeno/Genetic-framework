@@ -7,7 +7,7 @@ import utilities
 def genetic_algorithm(init_f, init_args, population_size,
                       fitness_f, fitness_args,
                       selection_f, selection_args,
-                      mutation_f, mutation_args, decay_args, decay_pace,
+                      mutation_f, mutation_args, decay_args, decay_pace, max_args,
                       crossover_f, crossover_args,
                       replacement_f, replacement_args,
                       condition_f, verbose):
@@ -27,7 +27,7 @@ def genetic_algorithm(init_f, init_args, population_size,
         utilities.my_print("Children created", verbose)
         population.evaluate_children(fitness_args)
         utilities.one_fifth_rule_decay(population.fitness, population.children_fitness,
-                                       mutation_args, decay_args, decay_pace)
+                                       mutation_args, decay_args, decay_pace, max_args)
         population.do_replacement(replacement_args)
         utilities.my_print("Population replaced", verbose)
         generation += 1
