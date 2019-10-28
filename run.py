@@ -76,11 +76,11 @@ def run_ea_tsp(file, chrom_size, population, crossover, max_gen, max_fit):
 
 
 def run_all_local_searches():
-    problem_file = "tsp/pr136.tsp"
-    chrom_size = 136
+    problem_file = "tsp/berlin52.tsp"
+    chrom_size = 52
     population = 50
     max_gen = 1000
-    max_fit = -96772
+    max_fit = -7542
 
     # LOCAL SEARCHES
 
@@ -108,7 +108,7 @@ def run_all_local_searches():
         top_sols.append(ts)
     print("EA:", top_sols)
 
-    plt.title("Local search Pr136")
+    plt.title("Local search berlin52")
     plt.xlabel("generation")
     plt.ylabel("distance")
     plt.legend(["Prohození sousedů", "Vzdálené prohození", "Otočení pořadí", "Optimální cesta"])
@@ -120,15 +120,16 @@ def run_all_local_searches():
     leg.legendHandles[1].set_color('green')
     leg.legendHandles[2].set_color('blue')
     leg.legendHandles[3].set_color('black')
-    plt.savefig("pr136.png")
+    # plt.savefig("pr136.png")
+    plt.show()
 
 
 def run_all_eas():
-    problem_file = "tsp/st70.tsp"
-    chrom_size = 70
+    problem_file = "tsp/berlin52.tsp"
+    chrom_size = 52
     population = 100
     max_gen = 1000
-    max_fit = -675
+    max_fit = -7542
 
     # EA
     top_sols = []
@@ -143,7 +144,7 @@ def run_all_eas():
         top_sols.append(ts)
 
     print("EA:", top_sols)
-    plt.title("EA St70")
+    plt.title("EA berlin52")
     plt.xlabel("generation")
     plt.ylabel("distance")
     plt.legend(["Vložit a smazat", "Uspořádané křížení", "Optimální cesta"])
@@ -154,9 +155,11 @@ def run_all_eas():
     leg.legendHandles[0].set_color('blue')
     leg.legendHandles[1].set_color('red')
     leg.legendHandles[2].set_color('black')
-    plt.savefig("st70_ea.png")
+    # plt.savefig("st70_ea.png")
+    plt.show()
 
 
 if __name__ == '__main__':
 
     run_all_eas()
+    run_all_local_searches()
