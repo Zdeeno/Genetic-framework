@@ -32,12 +32,12 @@ def map_bin_real(population, bounds=(0, 1)):
 
 
 def perturb_real_normal(population, sigma=1):  # OK
-    pop = np.asarray(population)
+    pop = np.asarray(population).copy()
     return pop + np.random.normal(0, sigma, np.shape(pop))
 
 
 def perturb_real_cauchy(population, gamma=1):  # OK
-    pop = np.asarray(population)
+    pop = np.asarray(population).copy()
     return pop + np.asarray(cauchy.rvs(0, gamma, np.shape(pop)))
 
 

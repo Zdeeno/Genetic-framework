@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 
 def sample_population(init_chromosome_f, args, population_size):
@@ -29,3 +28,7 @@ def init_shuffled_integer_array(size):
     ret = np.arange(size)
     np.random.shuffle(ret)
     return ret
+
+
+def init_conv_nn(length, width, variance):
+    return np.random.normal(0, variance, length*width)
