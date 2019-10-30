@@ -1,8 +1,8 @@
 import numpy as np
-
+import os
 
 RULE = 1/5
-SCALE = 1.75
+SCALE = 1.1
 
 
 def one_fifth_rule_decay(old_fitness, new_fitness, arg, decay_arg, decay_pace, max):
@@ -42,3 +42,17 @@ def fitness_scaling(fitness):
     new_fitness = (my_fitness/old_max)*scale + new_min
     return new_fitness
 
+
+def dump_population(population, filename):
+    if os.path.isfile(filename):
+        i = 0
+        while os.path.isfile(filename + str(i)):
+            i += 1
+        np.savetxt(filename + str(i), population, delimiter=',')
+    else:
+        np.savetxt(filename, population, delimiter=',')
+
+
+def load_population(filename):
+    assert os.path.isfile(filename), filename + " - this is not a file!!!"
+    return np.genfromtxt(filename, delimiter=',')

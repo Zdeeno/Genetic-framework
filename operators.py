@@ -196,3 +196,14 @@ def ordered_crossover(population, prob):
     for i in range(0, population.shape[1], 2):
         ret[:, order[i:i+2]] = single_ordered(population[:, i:i+2], prob)
     return ret
+
+
+def trading_crossover(population, width, prob):
+    num_of_swaps = int(population.shape[1] * prob)
+    pop_r = np.resize(population, (int(population.shape[0]/width), population.shape[1]*width))
+    pop_r_copy = pop_r.copy()
+    for i in range(num_of_swaps):
+        idxs = np.floor(np.random.rand(2) * pop_r.shape[1]).astype(int)
+        pop_r[:, idxs[0]] = pop_r_copy[:, idxs[1]]
+        pop_r[:, idxs[1]] = pop_r_copy[:, idxs[0]]
+    return np.resize(pop_r, population.shape)
