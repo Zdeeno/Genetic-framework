@@ -12,21 +12,20 @@ import numpy as np
 if __name__ == '__main__':
 
     fee = 0.3
-    conv_len = 16
+    conv_len = 24
     filters_per_ts = 2
-    timeseries_num = 3
+    timeseries_num = 4
     width = filters_per_ts * timeseries_num
-    pop_size = 100
+    pop_size = 250
     init_variance = 0.01
-    perturb_variance = 0.0001
+    perturb_variance = 0.001
     crossover_prob = 0.1
     variance_decay = 0.9999
     candle_min = 15
     candles_per_batch = 96 * 3  # 3 day
-    generations = 1000
+    generations = 5000
 
     parser = BTCBitstampNMin(candle_min, candles_per_batch)
-    print("------ Data parsed ------")
     population = sample_population(init_conv_nn, [conv_len, width, init_variance], pop_size)
 
     log1 = []
@@ -38,8 +37,9 @@ if __name__ == '__main__':
         data_incr, price = parser.get_batch()
         # evaluate
         fitness = percent_earned(population, data_incr, price, filters_per_ts, fee)
-        # perturbation and crossover
-        new_population = perturb_real_cauchy(population, perturb_variance)
+        # mutation
+        new_population = perturb_real_normal(population, perturb_variance)
+        # crossover
         new_population = trading_crossover(new_population, width, crossover_prob)
         # evaluate children
         new_fitness = percent_earned(new_population, data_incr, price, filters_per_ts, fee)

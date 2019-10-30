@@ -165,7 +165,7 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     price_ts = price_ts[filter_len:]
 
     # calculate actual fitness
-    last_chrom = -1
+    last_pos = 0
     for idx in range(actions_row.size):
         new_chrom = actions_row[idx]
         new_pos = actions[new_chrom, actions_idx[idx]]

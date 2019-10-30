@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 RULE = 1/5
-SCALE = 1.1
+SCALE = 1.2
 
 
 def one_fifth_rule_decay(old_fitness, new_fitness, arg, decay_arg, decay_pace, max):
