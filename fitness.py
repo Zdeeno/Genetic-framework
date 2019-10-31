@@ -154,8 +154,8 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
 
     # to cpu and cast to another type
     if device is not None and device != torch.device("cpu"):
-        actions.to(torch.device("cpu"))
-        actions_idx.to(torch.device("cpu"))
+        actions = actions.cpu()
+        actions_idx = actions_idx.cpu()
 
     actions = actions[0].numpy()
     actions_row = np.asarray(actions_idx[1])
