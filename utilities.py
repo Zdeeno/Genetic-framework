@@ -56,3 +56,5 @@ def dump_population(population, filename):
 def load_population(filename):
     assert os.path.isfile(filename), filename + " - this is not a file!!!"
     return np.genfromtxt(filename, delimiter=',')
+
+

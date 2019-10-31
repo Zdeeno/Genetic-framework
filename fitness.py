@@ -2,6 +2,7 @@ import numpy as np
 import torch.nn as nn
 import torch
 
+
 def one_max(population):  # OK
 
     def one_max_single(chromosome):
@@ -108,6 +109,16 @@ def traveled_distance(population, distance_matrix):  # for HW1
     return np.apply_along_axis(traveled_distance_single, 0, population, distance_matrix)
 
 
+class Conv(torch.nn.Module):
+    # helper class for GPU computations
+    def __init__(self, dim1, dim2):
+        super(Conv, self).__init__()
+        self.conv1 = torch.nn.Conv1d(1, dim1, dim2, bias=False)
+
+    def forward(self, x):
+        return self.conv1(x)
+
+
 def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=None):
     """
     :param population: (length, population)
@@ -119,19 +130,18 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     filter_rows = int(width*population.shape[1])
     filter_len = int(population.shape[0]/width)
     conv_filter = np.resize(np.transpose(population), (filter_rows, 1, filter_len))
-    torch_filter = torch.nn.Conv1d(1, population.shape[1]*filter_per_ts, conv_filter.shape[2], bias=False)
+    torch_filter = Conv(population.shape[1]*filter_per_ts, conv_filter.shape[2])
 
     outputs = []
     for i in range(int(width/filter_per_ts)):
         np_ts = timeseries[:-1, i]  # I dont really care about last action
         torch_ts = torch.from_numpy(np.resize(np_ts, (1, 1, np_ts.size)))
-        start = i*filter_per_ts
         idxs = []
         for j in range(i*filter_per_ts, filter_rows, width):
             for k in range(filter_per_ts):
                 idxs.append(j + k)
-        torch_filter.weight = torch.nn.Parameter(torch.from_numpy(conv_filter[idxs, :, :]), requires_grad=False)
-        if device is not None:
+        torch_filter.conv1.weight = torch.nn.Parameter(torch.from_numpy(conv_filter[idxs, :, :]), requires_grad=False)
+        if device is not None and device != torch.device("cpu"):
             torch_filter.to(device)
             torch_ts.to(device)
         out = torch_filter(torch_ts)
@@ -185,8 +195,6 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
                 fitness[new_chrom] -= fee
 
     return fitness
-
-
 
 
 
