@@ -132,8 +132,8 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
                 idxs.append(j + k)
         torch_filter.weight = torch.nn.Parameter(torch.from_numpy(conv_filter[idxs, :, :]), requires_grad=False)
         if device is not None:
-            torch_filter.cuda(device)
-            torch_ts.cuda(device)
+            torch_filter.to(device)
+            torch_ts.to(device)
         out = torch_filter(torch_ts)
         outputs.append(out)
 
@@ -154,7 +154,7 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     actions_idx = torch.nonzero(actions, as_tuple=True)
 
     # to cpu and cast to another type
-    if device is not None:
+    if device is not None and device != torch.device("cpu"):
         actions.to(torch.device("cpu"))
         actions_idx.to(torch.device("cpu"))
 

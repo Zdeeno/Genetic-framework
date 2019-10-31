@@ -7,23 +7,26 @@ from tqdm import tqdm
 from btc.visualisation import visualise
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 
 if __name__ == '__main__':
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     fee = 0.3
     conv_len = 24
     filters_per_ts = 2
     timeseries_num = 4
     width = filters_per_ts * timeseries_num
-    pop_size = 250
+    pop_size = 100
     init_variance = 0.01
     perturb_variance = 0.001
     crossover_prob = 0.1
     variance_decay = 0.9999
     candle_min = 15
     candles_per_batch = 96 * 3  # 3 day
-    generations = 5000
+    generations = 500
 
     parser = BTCBitstampNMin(candle_min, candles_per_batch)
     population = sample_population(init_conv_nn, [conv_len, width, init_variance], pop_size)
@@ -36,13 +39,13 @@ if __name__ == '__main__':
         # get new data batch
         data_incr, price = parser.get_batch()
         # evaluate
-        fitness = percent_earned(population, data_incr, price, filters_per_ts, fee)
+        fitness = percent_earned(population, data_incr, price, filters_per_ts, fee, device)
         # mutation
         new_population = perturb_real_normal(population, perturb_variance)
         # crossover
         new_population = trading_crossover(new_population, width, crossover_prob)
         # evaluate children
-        new_fitness = percent_earned(new_population, data_incr, price, filters_per_ts, fee)
+        new_fitness = percent_earned(new_population, data_incr, price, filters_per_ts, fee, device)
         # create new generation
         population = pointer_wheel_replacement(population, fitness, new_population, new_fitness, pop_size)
         # decay parameter
@@ -60,9 +63,9 @@ if __name__ == '__main__':
     print("Best on validation: ", val_fit.max())
     # visualise validation
     bias = visualise(population[:, val_fit.argmax()], val_incr, val_price, filters_per_ts, True)
-    print("bias: " , bias)
+    print("bias: ", bias)
 
     plt.plot(log1, "b")
     plt.plot(log2, "r")
     plt.grid()
-    plt.show()
+    plt.savefig("progress.png")
