@@ -150,16 +150,19 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     buys = (final_sum > 1).double()
     sells = (final_sum < 1).double()
     actions = buys - sells
-    actions_idx = torch.nonzero(actions, as_tuple=True)
+    actions_nz = torch.nonzero(actions, as_tuple=True)
+    actions_row = actions_nz[1]
+    actions_idx = actions_nz[2]
 
     # to cpu and cast to another type
     if device is not None and device != torch.device("cpu"):
         actions = actions.cpu()
         actions_idx = actions_idx.cpu()
+        actions_row = actions_row.cpu()
 
     actions = actions[0].numpy()
-    actions_row = np.asarray(actions_idx[1])
-    actions_idx = np.asarray(actions_idx[2])
+    actions_row = np.asarray(actions_row)
+    actions_idx = np.asarray(actions_idx)
     fitness = np.zeros(population.shape[1])
     price_ts = price_ts[filter_len:]
 
