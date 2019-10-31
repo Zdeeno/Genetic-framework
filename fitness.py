@@ -166,6 +166,7 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
 
     # calculate actual fitness
     last_pos = 0
+    last_chrom = -1
     for idx in range(actions_row.size):
         new_chrom = actions_row[idx]
         new_pos = actions[new_chrom, actions_idx[idx]]
@@ -176,8 +177,9 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
             last_idx = idx
         else:
             if abs(last_pos - new_pos) > 1:
-                fitness[new_chrom] += (((price_ts[actions_idx[idx]] /
-                                         price_ts[actions_idx[last_idx]]) - 1) * 100) * last_pos
+                if last_pos == 1:  # not sure how to calculate fitness - only profit from buys
+                    fitness[new_chrom] += (((price_ts[actions_idx[idx]] /
+                                             price_ts[actions_idx[last_idx]]) - 1) * 100) * last_pos
                 last_idx = idx
                 last_pos = new_pos
                 fitness[new_chrom] -= fee
