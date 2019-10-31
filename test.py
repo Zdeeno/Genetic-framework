@@ -17,7 +17,7 @@ if __name__ == '__main__':
     fee = 0.3
     conv_len = 24
     filters_per_ts = 2
-    timeseries_num = 4
+    timeseries_num = 5
     width = filters_per_ts * timeseries_num
     pop_size = 1000
     init_variance = 0.01

@@ -49,7 +49,7 @@ class BTCBitstampNMin:
         self._volume_incr_ts = self._get_incremental_ts(self._volume_ts)
         self._rsi_ts = (self._rsi_ts - 50)/50  # [-1, 1]
         self._macd_ts = self._macd_ts/self._price_ts  # +- percentage
-        self._bb_ts = self._bb_ts/self._price_ts  # TODO: check whether data here are correct
+        self._bb_ts = self._bb_ts/self._price_ts - 1  # TODO: check whether data here are correct
 
         # align data
         self._price_ts = self._price_ts[1:]
