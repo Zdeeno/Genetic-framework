@@ -172,7 +172,7 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     fitness = fit_per_action.sum(2).view(-1) + fitness
 
     if device is not None and device != torch.device("cpu"):
-        fitness.cpu()
+        fitness = fitness.cpu()
 
     fitness = fitness.numpy()
 
