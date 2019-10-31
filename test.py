@@ -19,14 +19,14 @@ if __name__ == '__main__':
     filters_per_ts = 2
     timeseries_num = 4
     width = filters_per_ts * timeseries_num
-    pop_size = 100
+    pop_size = 1000
     init_variance = 0.01
     perturb_variance = 0.001
     crossover_prob = 0.1
     variance_decay = 0.9999
     candle_min = 15
     candles_per_batch = 96 * 3  # 3 day
-    generations = 500
+    generations = 10000
 
     parser = BTCBitstampNMin(candle_min, candles_per_batch)
     population = sample_population(init_conv_nn, [conv_len, width, init_variance], pop_size)
