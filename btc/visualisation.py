@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
+import os
 
 
 def visualise(chromosome, timeseries, price_ts, filter_per_ts, savefig, device=None):
@@ -57,7 +58,7 @@ def visualise(chromosome, timeseries, price_ts, filter_per_ts, savefig, device=N
     bias = np.mean(actions)
     actions_idx = np.asarray(actions_idx[2])
 
-    plt.plot(price_ts[filter_len:], lw=0.25)
+    plt.plot(price_ts[filter_len:], lw=0.15)
 
     last_action = 0
     for i in range(actions_idx.size):
@@ -71,7 +72,11 @@ def visualise(chromosome, timeseries, price_ts, filter_per_ts, savefig, device=N
             last_action = action
 
     if savefig:
-        plt.savefig('chart.eps', format='eps')
+        i = 0
+        filename = "chart"
+        while os.path.exists('{}{:d}.eps'.format(filename, i)):
+            i += 1
+        plt.savefig('{}{:d}.eps'.format(filename, i), format="eps")
         plt.close()
     else:
         plt.show()

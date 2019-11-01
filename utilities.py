@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 RULE = 1/5
-SCALE = 1.2
+SCALE = 1.5
 
 
 def one_fifth_rule_decay(old_fitness, new_fitness, arg, decay_arg, decay_pace, max):
@@ -31,7 +31,7 @@ def update_top_solution(top_solution, population, generation):
 def fitness_scaling(fitness):
     fit_min = fitness.min()
     my_fitness = fitness.copy()
-    my_fitness = my_fitness - fit_min
+    my_fitness = my_fitness - fit_min + 1
     old_max = my_fitness.max()
     avg = np.mean(my_fitness)
     if old_max == avg:
@@ -41,6 +41,13 @@ def fitness_scaling(fitness):
     scale = new_max - new_min
     new_fitness = (my_fitness/old_max)*scale + new_min
     return new_fitness
+
+
+def fitness_sharing(fitness, param, bins_num):
+    histogram, bins = np.histogram(param, bins_num)
+    idxs = np.fmin(np.digitize(param, bins), bins_num) - 1
+    ret = fitness/histogram[idxs]
+    return ret
 
 
 def dump_population(population, filename):

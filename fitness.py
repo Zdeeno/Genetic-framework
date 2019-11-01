@@ -123,14 +123,15 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     torch_filter = torch.nn.Conv1d(1, population.shape[1]*filter_per_ts, conv_filter.shape[2], bias=False)
     torch_ts = torch.from_numpy(np.resize(np.transpose(timeseries), (1, timeseries.shape[1], timeseries.shape[0])))
     torch_filter_vals = torch.from_numpy(conv_filter)
-    fitness = torch.zeros(population.shape[1])
 
     # move variables to gpu if possible
     if device is not None and device != torch.device("cpu"):
-        fitness = fitness.to(device)
+        fitness = torch.zeros(population.shape[1], device=device)
         torch_ts = torch_ts.to(device)
         torch_filter = torch_filter.to(device)
         torch_filter_vals = torch_filter_vals.to(device)
+    else:
+        fitness = torch.zeros(population.shape[1])
 
     outputs = []
     for i in range(int(width/filter_per_ts)):
@@ -170,13 +171,16 @@ def percent_earned(population, timeseries, price_ts, filter_per_ts, fee, device=
     price_incr = torch_ts[0, 0, filter_len:].view(1, 1, -1).repeat((1, population.shape[1], 1))
     fit_per_action = price_incr * actions
     fitness = fit_per_action.sum(2).view(-1) + fitness
+    bias = actions.sum(2).view(-1)/(timeseries.shape[0] - filter_len)
 
     if device is not None and device != torch.device("cpu"):
         fitness = fitness.cpu()
+        bias = bias.cpu()
 
     fitness = fitness.numpy()
+    bias = bias.numpy()
 
-    return fitness
+    return fitness, bias
 
 
 
