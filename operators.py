@@ -31,14 +31,42 @@ def map_bin_real(population, bounds=(0, 1)):
     return np.apply_along_axis(map_bin_real_single, 0, population, bounds)
 
 
-def perturb_real_normal(population, sigma=1):  # OK
+def perturb_real_normal(population, sigma=1, p_chrom=1, p_gene=None):  # OK
     pop = np.asarray(population).copy()
-    return pop + np.random.normal(0, sigma, np.shape(pop))
+    if p_gene is None:
+        if p_chrom == 1:
+            pop += np.random.normal(0, sigma, population.shape)
+        else:
+            num = int(population.shape[1] * p_chrom)
+            chrom_idxs = np.random.randint(0, population.shape[1], num)
+            pop[:, chrom_idxs] += np.random.normal(0, sigma, (population.shape[0], chrom_idxs.size))
+    else:
+        a = np.zeros(population.size, dtype=int)
+        num = int(population.size * p_gene)
+        a[:num] = 1
+        np.random.shuffle(a)
+        gene_mask = a.astype(bool).resize(population.shape)
+        pop[gene_mask] += np.random.normal(0, sigma, population.shape)[gene_mask]
+    return pop
 
 
-def perturb_real_cauchy(population, gamma=1):  # OK
+def perturb_real_cauchy(population, gamma=1, p_chrom=1, p_gene=None):  # OK
     pop = np.asarray(population).copy()
-    return pop + np.asarray(cauchy.rvs(0, gamma, np.shape(pop)))
+    if p_gene is None:
+        if p_chrom == 1:
+            pop += np.asarray(cauchy.rvs(0, gamma, population.shape))
+        else:
+            num = int(population.shape[1] * p_chrom)
+            chrom_idxs = np.random.randint(0, population.shape[1], num)
+            pop[:, chrom_idxs] += np.asarray(cauchy.rvs(0, gamma, (population.shape[0], chrom_idxs.size)))
+    else:
+        a = np.zeros(population.size, dtype=int)
+        num = int(population.size * p_gene)
+        a[:num] = 1
+        np.random.shuffle(a)
+        gene_mask = a.astype(bool).resize(population.shape)
+        pop[gene_mask] += np.asarray(cauchy.rvs(0, gamma, population.shape)[gene_mask])
+    return pop
 
 
 def swap_two_random(population, prob=1):  # maybe add probability here
@@ -78,6 +106,16 @@ def swap_order(population, prob=1):
         else:
             return parent
     return np.apply_along_axis(single_swap, 0, population, prob)
+
+
+def flip_filter(population, filter_per_ts, ts_num, prob):
+    width = filter_per_ts*ts_num
+    num_of_flips = int(population.shape[1] * prob)
+    pop_r = np.resize(population, (int(population.shape[0]/width), population.shape[1]*width))
+    pop_r_flip = np.flip(pop_r, axis=0)
+    idxs = np.floor(np.random.rand(num_of_flips) * pop_r_flip.shape[1]).astype(int)
+    pop_r[:, idxs] = pop_r_flip[:, idxs]
+    return np.resize(pop_r, population.shape)
 
 
 # ------------- CROSSOVER -----------
@@ -198,12 +236,18 @@ def ordered_crossover(population, prob):
     return ret
 
 
-def trading_crossover(population, width, prob):
+def trading_crossover(population, filter_per_ts, ts_num, prob):
+    width = filter_per_ts*ts_num
     num_of_swaps = int(population.shape[1] * prob)
     pop_r = np.resize(population, (int(population.shape[0]/width), population.shape[1]*width))
     pop_r_copy = pop_r.copy()
     for i in range(num_of_swaps):
-        idxs = np.floor(np.random.rand(2) * pop_r.shape[1]).astype(int)
-        pop_r[:, idxs[0]] = pop_r_copy[:, idxs[1]]
-        pop_r[:, idxs[1]] = pop_r_copy[:, idxs[0]]
+        chrom = np.floor(np.random.rand(2) * population.shape[1]).astype(int)
+        idx1 = chrom[0] * width
+        idx2 = chrom[1] * width
+        tmp = np.arange(width)
+        np.random.shuffle(tmp)
+        idxs = tmp[:int(width/2)]
+        pop_r[:, idx1+idxs] = pop_r_copy[:, idx2+idxs]
+        pop_r[:, idx2+idxs] = pop_r_copy[:, idx1+idxs]
     return np.resize(pop_r, population.shape)

@@ -54,8 +54,6 @@ def pointer_wheel_replacement(pop, fit, new_pop, new_fit, ret_size, sharing=None
                                       ret_size, 1)  # scale and share
 
 
-
-
 def replace_the_best(pop, fit, new_pop, new_fit, ret_size):
     whole_pop = np.hstack((pop, new_pop))
     whole_fit = np.hstack((fit, new_fit))
