@@ -23,10 +23,11 @@ perturb_genes = 0.1
 crossover_prob = 0.001
 variance_decay = 0.9999
 candle_min = 60 * 6
-candles_per_batch = 4 * 14  # 2 weeks
-generations = 20000
+candles_per_batch = 4 * 28  # 4 weeks
+generations = 5000
 validation_step = 1000
 bins = 5000
+new_batch_step = 1
 
 
 def validate(parser, population):
@@ -53,7 +54,8 @@ if __name__ == '__main__':
     for i in tqdm(range(generations)):
 
         # get new data batch
-        data_incr, price = parser.get_batch()
+        if i % new_batch_step == 0:
+            data_incr, price = parser.get_batch()
         # evaluate
         fitness, bias = percent_earned(population, data_incr, price, filters_per_ts, fee, device)
         # selection for breeding

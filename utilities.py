@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 RULE = 1/5
-SCALE = 1.9
+SCALE = 1.75
 
 
 def one_fifth_rule_decay(old_fitness, new_fitness, arg, decay_arg, decay_pace, max):
@@ -44,10 +44,10 @@ def fitness_scaling(fitness):
 
 
 def fitness_sharing(fitness, param, bins_num):
-    histogram, bins = np.histogram(param, bins_num)
-    if np.any(histogram > 0.75 * fitness.size):
-        print("Population is not diverse!!!")
-    idxs = np.fmin(np.digitize(param, bins), bins_num) - 1
+    histogram, bins = np.histogram(param*fitness, bins_num)
+    if np.any(histogram > 0.1 * fitness.size):
+        print("Population is not diverse - " + str(histogram.max()) + " !!!")
+    idxs = np.fmin(np.digitize(param*fitness, bins), bins_num) - 1
     ret = fitness/histogram[idxs]
     return ret
 
