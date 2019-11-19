@@ -1,6 +1,7 @@
 import numpy as np
 
 
+# ---------------------------------- BINARY
 def one_max(population):  # OK
 
     def one_max_single(chromosome):
@@ -25,6 +26,7 @@ def labs(population):  # Probably OK
     return np.apply_along_axis(labs_single, 0, population)
 
 
+# ---------------------------------- REAL
 def sphere(population, minimum):  # OK
 
     def sphere_single(chromosome, minimum):
@@ -105,3 +107,88 @@ def traveled_distance(population, distance_matrix):  # for HW1
         return -np.sum(dist_matrix[from_idxs, to_idxs]) - dist_matrix[int(chromosome[0]), int(chromosome[-1])]
 
     return np.apply_along_axis(traveled_distance_single, 0, population, distance_matrix)
+
+
+# MULTI-CRITERION ---------------------------------------------------------
+
+
+def g6(population):
+
+    def single_g6_fit(chromosome):
+        c = chromosome
+        f = (c[0] - 10)**3 + (c[1] - 20)**3
+        return f
+
+    def single_g6_err(chromosome):
+        c = chromosome
+        g1 = -(c[0] - 5)**2 - (c[1] - 5)**2 + 100
+        if g1 <= 0:
+            g1 = 0
+        g2 = (c[0] - 6)**2 + (c[1] - 5)**2 - 82.81
+        if g2 <= 0:
+            g2 = 0
+        return g1 + g2
+
+    fs = np.apply_along_axis(single_g6_fit, 0, population)
+    gs = np.apply_along_axis(single_g6_err, 0, population)
+    return fs, gs
+
+
+def g8(population):
+
+    def single_g8_fit(chromosome):
+        c = chromosome
+        f = -(np.sin(2*np.pi*c[0])**3 * np.sin(2*np.pi*c[1]))/(c[0]**3 * (c[0] + c[1]))
+        return f
+
+    def single_g8_err(chromosome):
+        c = chromosome
+        g1 = c[0]**2 - c[1] + 1
+        if g1 <= 0:
+            g1 = 0
+        g2 = 1 - c[0] + (c[1] - 4)**2
+        if g2 <= 0:
+            g2 = 0
+        return g1 + g2
+
+    fs = np.apply_along_axis(single_g8_fit, 0, population)
+    gs = np.apply_along_axis(single_g8_err, 0, population)
+    return fs, gs
+
+
+def g11(population):
+
+    def single_g11_fit(chromosome):
+        c = chromosome
+        f = c[0]**2 + (c[1] - 1)**2
+        return f
+
+    def single_g11_err(chromosome):
+        c = chromosome
+        return c[1] - c[0]**2
+
+    fs = np.apply_along_axis(single_g11_fit, 0, population)
+    gs = np.apply_along_axis(single_g11_err, 0, population)
+    return fs, gs
+
+
+def g24(population):
+
+    def single_g24_fit(chromosome):
+        c = chromosome
+        f = -c[0] - c[1]
+        return f
+
+    def single_g24_err(chromosome):
+        c = chromosome
+        g1 = -2*c[0]**4 + 8*c[0]**3 - 8*c[0]**2 + c[1] - 2
+        if g1 <= 0:
+            g1 = 0
+        g2 = -4*c[0]**4 + 32*c[0]**3 - 88*c[0]**2 + 96*c[0] + c[1] - 36
+        if g2 <= 0:
+            g2 = 0
+        return g1 + g2
+
+    fs = np.apply_along_axis(single_g24_fit, 0, population)
+    gs = np.apply_along_axis(single_g24_err, 0, population)
+    return fs, gs

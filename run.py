@@ -161,5 +161,6 @@ def run_all_eas():
 
 if __name__ == '__main__':
 
-    run_all_eas()
-    run_all_local_searches()
+    # run_all_eas()
+    # run_all_local_searches()
+    pass

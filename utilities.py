@@ -42,3 +42,75 @@ def fitness_scaling(fitness):
     new_fitness = (my_fitness/old_max)*scale + new_min
     return new_fitness
 
+
+def stochastic_ranking(population, fitness, fi, max_it=None, Pf=0.1):
+    pop_size = population.shape[1]
+    if max_it is None:
+        max_it = pop_size//5
+    final_order = np.arange(pop_size)
+    for i in range(max_it):
+        swap_done = False
+        for j in range(pop_size - 1):
+            p = np.random.rand(1)
+            if (fitness[j] == 0 and fitness[j + 1] == 0) or p < Pf:
+                tmp = final_order[j]
+                final_order[j] = final_order[j + 1]
+                final_order[j + 1] = tmp
+                swap_done = True
+            else:
+                if fi[j] > fi[j + 1]:
+                    tmp = final_order[j]
+                    final_order[j] = final_order[j + 1]
+                    final_order[j + 1] = tmp
+                    swap_done = True
+        if not swap_done:
+            break
+    return population[:, final_order]
+
+
+def fronts_and_crowding(c1, c2):
+    def dominators(c1, c2, indices):    # this is probably wrong!!!
+        ret = []
+        for idx in indices:
+            if not np.any(((c1[idx] < c1).astype(int) + (c2[idx] < c2).astype(int)) == 2):
+                ret.append(idx)
+        return ret
+
+    def crowding_dist(c1, c2, fronts):
+        ret_dists = np.zeros(c1.size())
+        unique_fronts = np.unique(fronts)
+        for front in unique_fronts:
+            front_idxs = np.where(fronts == front)
+            c1_sorted_idxs = np.argsort(c1[front_idxs])
+            c2_sorted_idxs = np.argsort(c2[front_idxs])
+            for i, idx in enumerate(front_idxs):
+                if c1_sorted_idxs[0] == i or c1_sorted_idxs[-1] == i or c2_sorted_idxs[0] == i or c2_sorted_idxs[-1] == i:
+                    ret_dists[idx] = 1000000
+                else:
+                    index_c1 = np.where(c1 == i)
+                    index_c2 = np.where(c2 == i)
+                    c1_lower = c1[front_idxs[c1_sorted_idxs[index_c1 - 1]]]
+                    c1_upper = c1[front_idxs[c1_sorted_idxs[index_c1 + 1]]]
+                    c2_lower = c2[front_idxs[c2_sorted_idxs[index_c2 - 1]]]
+                    c2_upper = c2[front_idxs[c2_sorted_idxs[index_c2 + 1]]]
+                    ret_dists[idx] = abs(c1_upper - c1_lower) + abs(c2_upper - c2_lower)
+        return ret_dists
+
+    fronts = np.zeros(np.size(c1))
+    front_num = 1
+    while True:
+        doms = dominators(c1, c2, np.where(fronts == 0))
+        if len(doms) == 0:
+            fronts[fronts == 0] = front_num
+            break
+        else:
+            fronts[doms] = front_num
+            front_num += 1
+
+    distances = crowding_dist(c1, c2, fronts)
+    return fronts, distances
+
+
+
+
+
