@@ -4,7 +4,7 @@ import operators as op
 import executors as ex
 import selects as sel
 import inits
-import tcp_parser as parse
+import tsp.tsp_parser as parse
 import matplotlib.pyplot as plt
 
 
