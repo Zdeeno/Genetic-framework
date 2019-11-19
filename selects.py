@@ -65,10 +65,15 @@ def binary_tournament_selector(population, front, c_d):
 
 # ------ replacement strategy ------
 
-def pointer_wheel_replacement(pop, fit, new_pop, new_fit, ret_size):
+def pointer_wheel_replacement(pop, fit, new_pop, new_fit, ret_size, sharing=None):
     whole_pop = np.hstack((pop, new_pop))
     whole_fit = np.hstack((fit, new_fit))
-    return pointer_wheel_selector(whole_pop, ut.fitness_scaling(whole_fit), ret_size, 1)
+    if sharing is None:
+        return pointer_wheel_selector(whole_pop, ut.fitness_scaling(whole_fit), ret_size, 1)  # only scale
+    else:
+        return pointer_wheel_selector(whole_pop,
+                                      ut.fitness_sharing(ut.fitness_scaling(whole_fit), sharing[0], sharing[1]),
+                                      ret_size, 1)  # scale and share
 
 
 def replace_the_best(pop, fit, new_pop, new_fit, ret_size):
