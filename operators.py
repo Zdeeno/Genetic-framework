@@ -31,7 +31,7 @@ def map_bin_real(population, bounds=(0, 1)):
     return np.apply_along_axis(map_bin_real_single, 0, population, bounds)
 
 
-def perturb_real_normal(population, sigma=1, p_chrom=1, p_gene=None):  # OK
+def perturb_real_normal(population, lower_bound, upper_bound, sigma=1, p_chrom=1, p_gene=None):  # OK
     pop = np.asarray(population).copy()
     if p_gene is None:
         if p_chrom == 1:
@@ -47,6 +47,9 @@ def perturb_real_normal(population, sigma=1, p_chrom=1, p_gene=None):  # OK
         np.random.shuffle(a)
         gene_mask = a.astype(bool).resize(population.shape)
         pop[gene_mask] += np.random.normal(0, sigma, population.shape)[gene_mask]
+    for i in range(pop.shape[0]):
+        pop[i, pop[i, :] < lower_bound[i]] = lower_bound[i]
+        pop[i, pop[i, :] > upper_bound[i]] = upper_bound[i]
     return pop
 
 
@@ -121,7 +124,7 @@ def flip_filter(population, filter_per_ts, ts_num, prob):
 # ------------- CROSSOVER -----------
 
 
-def two_point_crossover(population, parents_num):
+def two_point_crossover(population, parents_num, prob):
 
     def single_crossover(parents):
         assert len(parents) > 1
@@ -132,7 +135,8 @@ def two_point_crossover(population, parents_num):
             tmp = parents[:, order[0]]
             for i in range(1, len(order)):
                 points = np.floor(np.random.rand(2) * parents.shape[0]).astype(int)
-                if points[0] - points[1] == 0:
+                co_len = points[0] - points[1]
+                if co_len == 0 or co_len == parents[0].size or np.random.rand(1) > prob:
                     return parents
                 if points[1] > points[0]:
                     tmp[points[0]:points[1]] = parents[points[0]:points[1], i]

@@ -18,9 +18,9 @@ def sample_population(init_chromosome_f, args, population_size):
     return ret
 
 
-def init_uniform_real(size, bounds):
+def init_uniform_real(size, lower_bound, upper_bound):
     ret = np.random.rand(size)
-    ret = (ret * (bounds[1] - bounds[0])) + bounds[0]
+    ret = (ret * (upper_bound - lower_bound)) + lower_bound
     return ret
 
 

@@ -43,20 +43,21 @@ def fitness_scaling(fitness):
     return new_fitness
 
 
-def stochastic_ranking(population, fitness, fi, max_it=None, Pf=0.1):
+def stochastic_ranking(population, fitness, fi, max_it=None, pf=0.5):
     pop_size = population.shape[1]
     if max_it is None:
-        max_it = pop_size//5
+        max_it = pop_size//20
     final_order = np.arange(pop_size)
     for i in range(max_it):
         swap_done = False
         for j in range(pop_size - 1):
             p = np.random.rand(1)
-            if (fitness[j] == 0 and fitness[j + 1] == 0) or p < Pf:
-                tmp = final_order[j]
-                final_order[j] = final_order[j + 1]
-                final_order[j + 1] = tmp
-                swap_done = True
+            if (fi[j] == 0 and fi[j + 1] == 0) or p < pf:
+                if fitness[j] > fitness[j + 1]:
+                    tmp = final_order[j]
+                    final_order[j] = final_order[j + 1]
+                    final_order[j + 1] = tmp
+                    swap_done = True
             else:
                 if fi[j] > fi[j + 1]:
                     tmp = final_order[j]
@@ -65,7 +66,7 @@ def stochastic_ranking(population, fitness, fi, max_it=None, Pf=0.1):
                     swap_done = True
         if not swap_done:
             break
-    return population[:, final_order]
+    return [population[:, final_order]]
 
 
 def fronts_and_crowding(population, c1, c2):
