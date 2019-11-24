@@ -68,7 +68,7 @@ def stochastic_ranking(population, fitness, fi, max_it=None, Pf=0.1):
     return population[:, final_order]
 
 
-def fronts_and_crowding(c1, c2):
+def fronts_and_crowding(population, c1, c2):
     def dominators(c1, c2, indices):    # this is probably wrong!!!
         ret = []
         for idx in indices:
@@ -108,7 +108,7 @@ def fronts_and_crowding(c1, c2):
             front_num += 1
 
     distances = crowding_dist(c1, c2, fronts)
-    return fronts, distances
+    return population, fronts, distances
 
 
 

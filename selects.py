@@ -42,7 +42,7 @@ def multiple_times_selector(population, fitness, multiplier):
     return new_pop
 
 
-def binary_tournament_selector(population, front, c_d):
+def binary_tournament_front_selector(population, front, c_d):
     # always halves the population
     def one_comparison(front1, front2, c_d1, c_d2):
         # determines wheter candidate1 is better than candidate2
@@ -61,6 +61,25 @@ def binary_tournament_selector(population, front, c_d):
             ret_pop[:, i//2] = population[:, idxs[0]]
         else:
             ret_pop[:, i//2] = population[:, idxs[1]]
+    return ret_pop
+
+
+def binary_tournament_sorted_selector(sorted_population):
+    # always halves the population
+    def one_comparison(id1, id2):
+        return id1 > id2
+
+    pop_size = sorted_population.shape[1]
+    ret_pop = np.empty((sorted_population.shape[0], pop_size//2))
+    shuffled_arr = [i for i in range(pop_size)]
+    shuffled_arr = random.shuffle(shuffled_arr)
+    for i in range(0, len(shuffled_arr), 2):
+        idxs = [shuffled_arr[i], shuffled_arr[i + 1]]
+        if one_comparison(idxs[0], idxs[1]):
+            ret_pop[:, i//2] = sorted_population[:, idxs[0]]
+        else:
+            ret_pop[:, i//2] = sorted_population[:, idxs[1]]
+    return ret_pop
 
 
 # ------ replacement strategy ------
