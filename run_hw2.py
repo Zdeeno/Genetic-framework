@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 def plot_pareto_optimal(pop, fitness_f, name):
     # plot whole pareto-optimal front
     f, err = fitness_f(pop)
-    _, fronts, _ = ut.fronts_and_crowding(pop, f, err)
+    _, fronts, _, _ = ut.fronts_and_crowding(pop, f, err)
     idxs = np.where(fronts == 1)[0]
     for idx in idxs:
         plt.scatter(f[idx], err[idx])
@@ -50,7 +50,7 @@ def run_NSGA2(generations, pop_size, problem_f, lower_bound, upper_bound, min_fi
     pop = exec.multiobjective_genetic_algorithm(init.init_uniform_real, [2, lower_bound, upper_bound], pop_size,
                                                 problem_f, [],
                                                 ut.fronts_and_crowding, [],
-                                                sel.binary_tournament_front_selector, [],
+                                                sel.binary_tournament_front_constrained_selector, [],
                                                 op.perturb_real_normal, [lower_bound, upper_bound],
                                                 op.two_point_crossover, [2, 0.25],
                                                 condition_f, False, generations, init_sigma)

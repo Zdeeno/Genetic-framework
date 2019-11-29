@@ -42,7 +42,7 @@ def multiple_times_selector(population, fitness, multiplier):
     return new_pop
 
 
-def binary_tournament_front_selector(population, front, c_d):
+def binary_tournament_front_selector(population, front, c_d, err):
     # always halves the population
     def one_comparison(front1, front2, c_d1, c_d2):
         # determines wheter candidate1 is better than candidate2
@@ -58,6 +58,31 @@ def binary_tournament_front_selector(population, front, c_d):
     for i in range(0, len(shuffled_arr), 2):
         idxs = [shuffled_arr[i], shuffled_arr[i + 1]]
         if one_comparison(front[idxs[0]], front[idxs[1]], c_d[idxs[0]], c_d[idxs[1]]):
+            ret_pop[:, i//2] = population[:, idxs[0]]
+        else:
+            ret_pop[:, i//2] = population[:, idxs[1]]
+    return ret_pop
+
+
+def binary_tournament_front_constrained_selector(population, front, c_d, err):
+    # always halves the population
+    def one_comparison(front1, front2, c_d1, c_d2, err1, err2):
+        # determines wheter candidate1 is better than candidate2
+        if err1 == err2:
+            if front1 < front2:  # smaller is better!
+                return True
+            else:
+                return c_d1 > c_d2  # bigger crowding distance is better
+        else:
+            return err1 < err2   # smaller error is better
+
+    pop_size = population.shape[1]
+    ret_pop = np.empty((population.shape[0], pop_size//2))
+    shuffled_arr = [i for i in range(pop_size)]
+    random.shuffle(shuffled_arr)
+    for i in range(0, len(shuffled_arr), 2):
+        idxs = [shuffled_arr[i], shuffled_arr[i + 1]]
+        if one_comparison(front[idxs[0]], front[idxs[1]], c_d[idxs[0]], c_d[idxs[1]], err[idxs[0]], err[idxs[1]]):
             ret_pop[:, i//2] = population[:, idxs[0]]
         else:
             ret_pop[:, i//2] = population[:, idxs[1]]

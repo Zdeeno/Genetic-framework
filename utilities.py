@@ -109,7 +109,7 @@ def fronts_and_crowding(population, c1, c2):
             front_num += 1
 
     distances = crowding_dist(c1, c2, fronts)
-    return population, fronts, distances
+    return population, fronts, distances, c2  # c2 is err
 
 
 
