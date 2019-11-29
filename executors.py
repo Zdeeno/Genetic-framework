@@ -45,10 +45,11 @@ def multiobjective_genetic_algorithm(init_f, init_args, pop_size,
                                      selection_f, selection_args,
                                      mutation_f, mutation_args,
                                      crossover_f, crossover_args,
-                                     condition_f, verbose, max_gen, init_sigma):
+                                     condition_f, verbose, max_gen, sigma):
     population = inits.sample_population(init_f, init_args, pop_size)
     log = []
-    sigma = init_sigma
+    sigma = sigma[0]
+    sigma_decay = sigma[1]
     for generation in tqdm(range(max_gen)):
         utilities.my_print("----- GENERATION " + str(generation) + " -----", verbose)
 
@@ -80,6 +81,6 @@ def multiobjective_genetic_algorithm(init_f, init_args, pop_size,
         population = selection_f(*processed, *selection_args)
         utilities.my_print("Population replaced", verbose)
 
-        sigma *= 0.998
+        sigma *= sigma_decay
 
     return population
