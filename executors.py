@@ -2,6 +2,7 @@ import numpy as np
 import inits
 import objects
 import utilities
+from tqdm import tqdm
 
 
 def genetic_algorithm(init_f, init_args, population_size,
@@ -44,28 +45,21 @@ def multiobjective_genetic_algorithm(init_f, init_args, pop_size,
                                      selection_f, selection_args,
                                      mutation_f, mutation_args,
                                      crossover_f, crossover_args,
-                                     condition_f, verbose):
+                                     condition_f, verbose, max_gen, init_sigma):
     population = inits.sample_population(init_f, init_args, pop_size)
-    generation = 0
     log = []
-    sigma = 3
-    fitness = np.full(pop_size, np.inf)
-    error = np.full(pop_size, np.inf)
-    top_solution = {"fitness": np.inf, "error": np.inf, "generation": 0, "chromosome": None}
-    while condition_f(generation, fitness, error):
+    sigma = init_sigma
+    for generation in tqdm(range(max_gen)):
         utilities.my_print("----- GENERATION " + str(generation) + " -----", verbose)
 
         fitness, error = fitness_f(population, *fitness_args)
+        if condition_f(fitness, error):
+            break
         utilities.my_print("Population evaluated", verbose)
 
         # UPDATE BEST SOLUTION
         best_arg = np.argmin(error)
         log.append([fitness[best_arg], error[best_arg]])
-        if fitness[best_arg] < top_solution["fitness"] and error[best_arg] < top_solution["error"]:
-            top_solution["fitness"] = fitness[best_arg]
-            top_solution["error"] = error[best_arg]
-            top_solution["generation"] = generation
-            top_solution["chromosome"] = population[:, best_arg]
 
         processed = preprocess_f(population, fitness, error, *preprocess_args)
 
@@ -86,7 +80,6 @@ def multiobjective_genetic_algorithm(init_f, init_args, pop_size,
         population = selection_f(*processed, *selection_args)
         utilities.my_print("Population replaced", verbose)
 
-        generation += 1
-        sigma *= 0.999
+        sigma *= 0.998
 
-    return top_solution, log, population
+    return population

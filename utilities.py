@@ -46,7 +46,7 @@ def fitness_scaling(fitness):
 def stochastic_ranking(population, fitness, fi, max_it=None, pf=0.5):
     pop_size = population.shape[1]
     if max_it is None:
-        max_it = pop_size//20
+        max_it = pop_size//10
     final_order = np.arange(pop_size)
     for i in range(max_it):
         swap_done = False
@@ -73,7 +73,7 @@ def fronts_and_crowding(population, c1, c2):
     def dominators(c1, c2, indices):    # this is probably wrong!!!
         ret = []
         for idx in indices:
-            if not np.sum((((c1[idx] <= c1[indices]).astype(int) + (c2[idx] <= c2[indices]).astype(int)) == 2).astype(int)) > 1:
+            if not (np.any(c2[c1 <= c1[idx]] < c2[idx]) or np.any(c1[c2 <= c2[idx]] < c1[idx])):    # is dominated?
                 ret.append(idx)
         return ret
 

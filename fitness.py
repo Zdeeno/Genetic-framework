@@ -116,17 +116,17 @@ def g6(population):
 
     def single_g6_fit(chromosome):
         c = chromosome
-        f = (c[0] - 10)**3 + (c[1] - 20)**3
+        f = (c[0] - 10.0)**3.0 + (c[1] - 20.0)**3.0
         return f
 
     def single_g6_err(chromosome):
         c = chromosome
-        g1 = -(c[0] - 5)**2 - (c[1] - 5)**2 + 100
+        g1 = -(c[0] - 5.0)**2.0 - (c[1] - 5)**2.0 + 100.0
         if g1 <= 0:
-            g1 = 0
-        g2 = (c[0] - 6)**2 + (c[1] - 5)**2 - 82.81
+            g1 = 0.0
+        g2 = (c[0] - 6.0)**2.0 + (c[1] - 5)**2.0 - 82.81
         if g2 <= 0:
-            g2 = 0
+            g2 = 0.0
         return g1 + g2
 
     fs = np.apply_along_axis(single_g6_fit, 0, population)
@@ -138,17 +138,17 @@ def g8(population):
 
     def single_g8_fit(chromosome):
         c = chromosome
-        f = -(np.sin(2*np.pi*c[0])**3 * np.sin(2*np.pi*c[1]))/(c[0]**3 * (c[0] + c[1]))
+        f = -(np.sin(2.0*np.pi*c[0])**3.0 * np.sin(2.0*np.pi*c[1]))/(c[0]**3.0 * (c[0] + c[1]))
         return f
 
     def single_g8_err(chromosome):
         c = chromosome
-        g1 = c[0]**2 - c[1] + 1
+        g1 = c[0]**2.0 - c[1] + 1.0
         if g1 <= 0:
-            g1 = 0
-        g2 = 1 - c[0] + (c[1] - 4)**2
+            g1 = 0.0
+        g2 = 1.0 - c[0] + (c[1] - 4.0)**2.0
         if g2 <= 0:
-            g2 = 0
+            g2 = 0.0
         return g1 + g2
 
     fs = np.apply_along_axis(single_g8_fit, 0, population)
@@ -160,12 +160,15 @@ def g11(population):
 
     def single_g11_fit(chromosome):
         c = chromosome
-        f = c[0]**2 + (c[1] - 1)**2
+        f = c[0]**2.0 + (c[1] - 1.0)**2.0
         return f
 
     def single_g11_err(chromosome):
         c = chromosome
-        return c[1] - c[0]**2
+        g = c[1] - c[0]**2.0
+        if g <= 0:
+            g = 0.0
+        return g
 
     fs = np.apply_along_axis(single_g11_fit, 0, population)
     gs = np.apply_along_axis(single_g11_err, 0, population)
@@ -181,12 +184,12 @@ def g24(population):
 
     def single_g24_err(chromosome):
         c = chromosome
-        g1 = -2*c[0]**4 + 8*c[0]**3 - 8*c[0]**2 + c[1] - 2
+        g1 = -2.0*c[0]**4.0 + 8.0*c[0]**3.0 - 8.0*c[0]**2.0 + c[1] - 2.0
         if g1 <= 0:
-            g1 = 0
-        g2 = -4*c[0]**4 + 32*c[0]**3 - 88*c[0]**2 + 96*c[0] + c[1] - 36
+            g1 = 0.0
+        g2 = -4.0*c[0]**4.0 + 32.0*c[0]**3.0 - 88.0*c[0]**2.0 + 96.0*c[0] + c[1] - 36.0
         if g2 <= 0:
-            g2 = 0
+            g2 = 0.0
         return g1 + g2
 
     fs = np.apply_along_axis(single_g24_fit, 0, population)

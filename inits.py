@@ -19,7 +19,7 @@ def sample_population(init_chromosome_f, args, population_size):
 
 
 def init_uniform_real(size, lower_bound, upper_bound):
-    ret = np.random.rand(size)
+    ret = np.random.rand(size).astype(np.float)
     ret = (ret * (upper_bound - lower_bound)) + lower_bound
     return ret
 
@@ -28,7 +28,3 @@ def init_shuffled_integer_array(size):
     ret = np.arange(size)
     np.random.shuffle(ret)
     return ret
-
-
-def init_conv_nn(length, width, variance):
-    return np.random.normal(0, variance, length*width)

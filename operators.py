@@ -32,14 +32,14 @@ def map_bin_real(population, bounds=(0, 1)):
 
 
 def perturb_real_normal(population, lower_bound, upper_bound, sigma=1, p_chrom=1, p_gene=None):  # OK
-    pop = np.asarray(population).copy()
+    pop = np.asarray(population).copy().astype(np.float)
     if p_gene is None:
         if p_chrom == 1:
             pop += np.random.normal(0, sigma, population.shape)
         else:
             num = int(population.shape[1] * p_chrom)
             chrom_idxs = np.random.randint(0, population.shape[1], num)
-            pop[:, chrom_idxs] += np.random.normal(0, sigma, (population.shape[0], chrom_idxs.size))
+            pop[:, chrom_idxs] += np.random.normal(0, sigma, (population.shape[0], chrom_idxs.size)).astype(np.float)
     else:
         a = np.zeros(population.size, dtype=int)
         num = int(population.size * p_gene)
@@ -148,7 +148,7 @@ def two_point_crossover(population, parents_num, prob):
 
     perms = math.factorial(parents_num)
     new_size = int(np.shape(population)[1]*(perms/parents_num))
-    ret = np.empty((np.shape(population)[0], new_size))
+    ret = np.empty((np.shape(population)[0], new_size), dtype=np.float)
     idx = 0
     for i in range(0, new_size, perms):
         ret[:, i:i+perms] = single_crossover(population[:, idx:idx+parents_num])
