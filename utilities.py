@@ -43,7 +43,7 @@ def fitness_scaling(fitness):
     return new_fitness
 
 
-def stochastic_ranking(population, fitness, fi, max_it=None, pf=0.5):
+def stochastic_ranking(population, fitness, fi, max_it=None, pf=0.4):
     pop_size = population.shape[1]
     if max_it is None:
         max_it = pop_size//10

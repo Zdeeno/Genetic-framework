@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-ITERATIONS = 5
+ITERATIONS = 3
 
 
 def plot_pareto_optimal(pops, fitness_f, name, opt):
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     # problem g6
     bottom_limit = np.asarray([13.0, 0.0])
     top_limit = np.asarray([100.0, 100.0])
-    perturb_sigma = [2, 0.999]  # sigma and decay
+    perturb_sigma = [1.0, 0.998]  # sigma and decay
     opt_fit = -6961.8138
     stop_dst = 0.25
     run_storchastic_ranking(max_iterations_sr, pop_size, fit.g6, bottom_limit, top_limit, opt_fit, stop_dst, perturb_sigma)

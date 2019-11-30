@@ -98,12 +98,15 @@ def binary_tournament_sorted_selector(sorted_population):
     ret_pop = np.empty((sorted_population.shape[0], pop_size//2))
     shuffled_arr = [i for i in range(pop_size)]
     random.shuffle(shuffled_arr)
+    ret_idxs = []
     for i in range(0, len(shuffled_arr), 2):
         idxs = [shuffled_arr[i], shuffled_arr[i + 1]]
         if one_comparison(idxs[0], idxs[1]):
-            ret_pop[:, i//2] = sorted_population[:, idxs[0]]
+            ret_idxs.append(idxs[0])
         else:
-            ret_pop[:, i//2] = sorted_population[:, idxs[1]]
+            ret_idxs.append(idxs[1])
+    ret_idxs.sort()
+    ret_pop = sorted_population[:, ret_idxs]
     return ret_pop
 
 
