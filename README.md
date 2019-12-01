@@ -1,4 +1,4 @@
 # Genetic-framework
 Simple python framework for genetic and evolutionary programming
 
-See examples how to run code in run.py
+For evaluation use "python3 run_hwX.py"
